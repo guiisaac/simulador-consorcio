@@ -1,45 +1,61 @@
-import { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { SimuladorData, ResultadoCalculo, DadosGrafico } from './types';
+import React, { useState, useEffect } from 'react';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 import { calcularResultados, gerarDadosGrafico } from './utils/calculos';
+import { SimuladorData, ResultadoCalculo, DadosGrafico } from './types';
 
 const dadosIniciais: SimuladorData = {
-  valorCarta: 100000,
-  reducaoPercentual: 15,
-  prazo: 120,
-  mesContemplacao: 24,
+  valorCarta: 200000,
+  reducaoPercentual: 30,
+  prazo: 180,
+  mesContemplacao: 36,
   taxaAdministrativa: 20,
-  correcaoAnual: 5,
-  valorCDI: 10
+  correcaoAnual: 12,
+  valorCDI: 11.15,
 };
 
-function formatarMoeda(valor: number): string {
-  return new Intl.NumberFormat('pt-BR', {
+const formatarMoeda = (valor: number): string => {
+  return valor.toLocaleString('pt-BR', {
     style: 'currency',
-    currency: 'BRL'
-  }).format(valor);
+    currency: 'BRL',
+  });
+};
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    value: number;
+    dataKey: string;
+    color: string;
+  }>;
+  label?: string;
 }
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white shadow-lg border border-slate-200 p-4 rounded-lg">
-        <p className="text-sm font-semibold text-slate-800 mb-3">Mês {label}</p>
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-3 h-3 rounded-full bg-slate-600"></div>
-          <p className="text-sm text-slate-900">
-            <span className="font-semibold">Parcela:</span>{' '}
-            <span className="font-medium">{formatarMoeda(payload[0].payload.parcela)}</span>
+      <div className="bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-gray-200">
+        <p className="font-semibold mb-2">Mês {label}</p>
+        {payload.map((entry) => (
+          <p
+            key={entry.dataKey}
+            className="text-sm"
+            style={{ color: entry.color }}
+          >
+            {entry.dataKey === 'parcela' && 'Parcela: '}
+            {entry.dataKey === 'totalPago' && 'Total Pago: '}
+            {entry.dataKey === 'patrimonio' && 'Patrimônio: '}
+            {entry.dataKey === 'investimento' && 'Investimento: '}
+            {formatarMoeda(entry.value)}
           </p>
-        </div>
-        {payload.map((item: any, index: number) => (
-          <div key={index} className="flex items-center gap-2 mb-2">
-            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
-            <p className="text-sm text-slate-900">
-              <span className="font-semibold">{item.name}:</span>{' '}
-              <span className="font-medium">{formatarMoeda(item.value)}</span>
-            </p>
-          </div>
         ))}
       </div>
     );
@@ -49,8 +65,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 function App() {
   const [dados, setDados] = useState<SimuladorData>(dadosIniciais);
-  const [resultados, setResultados] = useState<ResultadoCalculo>(calcularResultados(dadosIniciais));
-  const [dadosGrafico, setDadosGrafico] = useState<DadosGrafico[]>(gerarDadosGrafico(dadosIniciais));
+  const [resultados, setResultados] = useState<ResultadoCalculo | null>(null);
+  const [dadosGrafico, setDadosGrafico] = useState<DadosGrafico[]>([]);
 
   useEffect(() => {
     const novosResultados = calcularResultados(dados);
@@ -209,31 +225,31 @@ function App() {
           <div className="space-y-3">
             <div className="p-2 rounded-lg hover:bg-slate-50 transition-colors">
               <p className="text-sm text-slate-600">Total Pago</p>
-              <p className="text-base font-medium text-slate-800">{formatarMoeda(resultados.totalPago)}</p>
+              <p className="text-base font-medium text-slate-800">{formatarMoeda(resultados?.totalPago || 0)}</p>
             </div>
             <div className="p-2 rounded-lg hover:bg-slate-50 transition-colors">
               <p className="text-sm text-slate-600">Valor Final (com correção e CDI)</p>
-              <p className="text-base font-medium text-slate-800">{formatarMoeda(resultados.valorFinalComCorrecao)}</p>
+              <p className="text-base font-medium text-slate-800">{formatarMoeda(resultados?.valorFinalComCorrecao || 0)}</p>
             </div>
             <div className="p-2 rounded-lg hover:bg-slate-50 transition-colors">
               <p className="text-sm text-slate-600">Valor Final (com investimento)</p>
-              <p className="text-base font-medium text-slate-800">{formatarMoeda(resultados.valorFinalComInvestimento)}</p>
+              <p className="text-base font-medium text-slate-800">{formatarMoeda(resultados?.valorFinalComInvestimento || 0)}</p>
             </div>
             <div className="p-2 rounded-lg hover:bg-slate-50 transition-colors">
               <p className="text-sm text-slate-600">Diferença Final (Patrimônio)</p>
-              <p className={`text-base font-medium ${resultados.diferencaFinalPatrimonio < 0 ? 'text-red-500' : 'text-slate-800'}`}>
-                {formatarMoeda(resultados.diferencaFinalPatrimonio)}
+              <p className={`text-base font-medium ${(resultados?.diferencaFinalPatrimonio || 0) < 0 ? 'text-red-500' : 'text-slate-800'}`}>
+                {formatarMoeda(resultados?.diferencaFinalPatrimonio || 0)}
               </p>
             </div>
             <div className="p-2 rounded-lg hover:bg-slate-50 transition-colors">
               <p className="text-sm text-slate-600">Diferença Final (Investimento)</p>
-              <p className={`text-base font-medium ${resultados.diferencaFinalInvestimento > 0 ? 'text-emerald-500' : 'text-slate-800'}`}>
-                {formatarMoeda(resultados.diferencaFinalInvestimento)}
+              <p className={`text-base font-medium ${(resultados?.diferencaFinalInvestimento || 0) > 0 ? 'text-emerald-500' : 'text-slate-800'}`}>
+                {formatarMoeda(resultados?.diferencaFinalInvestimento || 0)}
               </p>
             </div>
             <div className="p-2 rounded-lg hover:bg-slate-50 transition-colors">
               <p className="text-sm text-slate-600">Prejuízo em relação ao total investido</p>
-              <p className="text-base font-medium text-slate-800">{formatarMoeda(resultados.prejuizoTotalInvestido)}</p>
+              <p className="text-base font-medium text-slate-800">{formatarMoeda(resultados?.prejuizoTotalInvestido || 0)}</p>
             </div>
           </div>
         </div>
