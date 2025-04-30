@@ -14,9 +14,9 @@ Simulador financeiro para análise de investimentos em consórcio vs. investimen
 ## 📋 Pré-requisitos
 
 - Node.js >= 18
-- PNPM
+- PNPM >= 8.15.1
 
-## 🔧 Instalação
+## 🔧 Instalação Local
 
 ```bash
 # Clone o repositório
@@ -30,17 +30,44 @@ pnpm install
 pnpm dev
 ```
 
-## 🏗️ Build
+## 🏗️ Build e Deploy
 
+### Build Local
 ```bash
 # Gera build de produção
 pnpm build
 
-# Visualiza build
+# Visualiza build localmente
 pnpm preview
 ```
 
-## 🧪 Testes e Qualidade
+### Deploy na Vercel
+
+1. Certifique-se de ter uma conta na [Vercel](https://vercel.com)
+2. Instale a CLI da Vercel (opcional):
+   ```bash
+   pnpm install -g vercel
+   ```
+
+3. Deploy via CLI:
+   ```bash
+   vercel
+   ```
+
+4. Ou conecte seu repositório GitHub à Vercel:
+   - Acesse [vercel.com/new](https://vercel.com/new)
+   - Importe o repositório
+   - As configurações serão automaticamente detectadas do `vercel.json`
+
+### Configurações do Deploy
+
+O projeto já está configurado com:
+- Build Command: `pnpm run build`
+- Output Directory: `dist`
+- Node Version: >= 18
+- Framework: Vite
+
+## 🧪 Qualidade de Código
 
 ```bash
 # Executa verificação de tipos
@@ -53,22 +80,6 @@ pnpm lint
 pnpm lint:fix
 ```
 
-## 🚀 Deploy na Vercel
-
-1. Fork este repositório no GitHub
-2. Crie uma conta na [Vercel](https://vercel.com)
-3. Importe o projeto do GitHub
-4. Configure as seguintes variáveis de ambiente (se necessário):
-   - `NODE_VERSION=18`
-5. Deploy!
-
-## 🔒 Segurança
-
-- Headers de segurança configurados
-- Strict TypeScript
-- Sem logs em produção
-- Sem acesso a APIs sensíveis do navegador
-
 ## 📦 Estrutura do Projeto
 
 ```
@@ -80,17 +91,30 @@ simulador-lar/
 │   ├── App.tsx      # Componente principal
 │   └── main.tsx     # Ponto de entrada
 ├── public/          # Arquivos públicos
+├── vercel.json      # Configuração do deploy
 └── ...             # Arquivos de configuração
 ```
+
+## 🔒 Segurança e Performance
+
+- Headers de segurança configurados
+- Strict TypeScript
+- Otimização de assets
+- Code splitting automático
+- Minificação de código em produção
 
 ## 🤝 Contribuindo
 
 1. Fork o projeto
-2. Crie sua Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a Branch (`git push origin feature/AmazingFeature`)
+2. Crie sua Feature Branch (`git checkout -b feature/NovaFuncionalidade`)
+3. Commit suas mudanças (`git commit -m 'Adiciona nova funcionalidade'`)
+4. Push para a Branch (`git push origin feature/NovaFuncionalidade`)
 5. Abra um Pull Request
 
 ## 📄 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+## 🆘 Suporte
+
+Para reportar problemas ou sugerir melhorias, abra uma issue no GitHub.
