@@ -1,4 +1,4 @@
-# Simulador do Projeto L.A.R.
+# Simulador de consórcio CIC-ONE
 
 Simulador financeiro para análise de investimentos em consórcio vs. investimento direto.
 
