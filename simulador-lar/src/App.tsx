@@ -44,7 +44,7 @@ interface CustomTooltipProps {
   dados: SimuladorData;
 }
 
-const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label, dados }) => {
+const CustomTooltip: React.FC<CustomTooltipProps> = React.memo(({ active, payload, label, dados }) => {
   if (active && payload && payload.length) {
     const mesAtual = Number(label);
     const parcelaAtual = payload[0]?.payload?.parcela || 0;
@@ -94,7 +94,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label, d
     );
   }
   return null;
-};
+});
 
 interface InfoTooltipProps {
   text: string;
@@ -156,12 +156,12 @@ function App() {
     }
   }, [dados]);
 
-  const handleInputChange = (campo: keyof SimuladorData, valor: string) => {
+  const handleInputChange = React.useCallback((campo: keyof SimuladorData, valor: string) => {
     setDados(prev => ({
       ...prev,
       [campo]: valor === '' ? 0 : Number(valor)
     }));
-  };
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-50 p-2 max-w-[1920px] mx-auto flex flex-col">
