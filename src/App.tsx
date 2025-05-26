@@ -180,8 +180,8 @@ function App() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 p-2 max-w-[1920px] mx-auto flex flex-col">
-      <div className="max-w-7xl mx-auto w-full flex flex-col flex-grow">
+    <div className="min-h-screen bg-slate-50 p-2 flex flex-col w-full ">
+      <div className="w-full flex flex-col flex-grow">
         <div className="relative pt-2 pb-2 mb-1">
           <h1 className="text-3xl font-bold text-slate-800 text-center">
             Simulador de consórcio CIC-ONE
